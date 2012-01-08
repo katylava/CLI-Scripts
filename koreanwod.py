@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     for w in words[:number]:
         if options.korean:
-            print(w[0])
+            print(w[0].encode('utf-8'))
         if options.pronunciation:
             print(w[1])
         if options.translation:
