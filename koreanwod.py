@@ -44,8 +44,6 @@ if __name__ == '__main__':
                            " Basic, the default, is 1.")
 
     (options, args) = parser.parse_args()
-    # args will now be a tuple of args in the order they were entered
-    # options will be an object with attributes corresponding to the long-name give for the option (second add_option parameter)
 
     if not (options.korean or options.pronunciation
             or options.translation or options.url):
