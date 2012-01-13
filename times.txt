@@ -1,0 +1,42 @@
+----------
+Wed Jan 11
+---
+10:00 - 11:00 @internal
+    set up, email, etc
+11:00 - 13:00 @abc-project
+    coding and stuff
+14:00 - 14:30 & 14:45 - 15:30 @xyz-project
+    writing specifications
+14:30 - 14:45 @old-project
+    quick bug fix
+15:30 - 18:00 @abc-project
+    more coding and stuff
+----------
+Tue Jan 10
+---
+10:00 - 10:30 @internal
+    set up, email, etc
+10:30 - 11:00 @abc-project
+    email communication
+11:00 - 13:30 & 14:30 - 16:15 @def-website
+    new feature blah blah blah
+16:15 - 16:40 @def-website
+    discussing new feature
+16:40 - 18:00 @abc-project
+    coding and stuff
+----------
+Mon Jan 09
+---
+10:10 - 11:15 @internal
+    production meeting
+11:15 - 11:30 @internal
+    entering times
+11:00 - 13:30 @abc-project
+    planning friday deliverables
+13:00 - 13:30 @abc-project
+    communicating plan for week and asking questions
+14:30 - 17:15 @def-website
+    new feature, bug fixes
+17:15 - 18:30 @r-and-d
+    researching new tech
+    
