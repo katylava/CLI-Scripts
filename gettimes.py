@@ -97,14 +97,19 @@ while 1:
 
 dates = times.keys()
 dates.sort()
+grand_total = datetime.timedelta()
 
 for dt in dates:
     wrapper = TextWrapper(width=65, subsequent_indent=" "*12)
     dtd = times[dt]
+    grand_total += dtd['total']
     print '-'*18
     print '%s on %s' % (fmtdur(dtd['total'], "{}:{}"), dt.strftime("%a %b %d"))
     for p, pd in dtd['projects'].items():
         print '  %s @%s' % (fmtdur(pd['total'], "{}:{}"), p)
         for task, intvl in pd['tasks'].items():
             print '    [%s] %s' % (fmtdur(intvl, '{}:{}'), wrapper.fill(task))
+
+print '-'*18
+print 'Total {}'.format(grand_total)
 
