@@ -53,9 +53,11 @@ def get_interval(timestr):
         total += intvl
     return total
 
-def fmtdur(dur, fmt='{}h {}m'):
-    h, m, s = dur.__str__().split(':')
-    return fmt.format(h, m, s)
+def fmtdur(dur, fmt='{:02d}:{:02d}'):
+    h = dur.total_seconds() // 3600
+    m = dur.total_seconds() // 60 % 60
+    s = dur.total_seconds() % 60
+    return fmt.format(int(h), int(m), int(s))
 
 
 l = f.next()
@@ -104,12 +106,12 @@ for dt in dates:
     dtd = times[dt]
     grand_total += dtd['total']
     print '-'*18
-    print '%s on %s' % (fmtdur(dtd['total'], "{}:{}"), dt.strftime("%a %b %d"))
+    print '%s on %s' % (fmtdur(dtd['total']), dt.strftime("%a %b %d"))
     for p, pd in dtd['projects'].items():
-        print '  %s @%s' % (fmtdur(pd['total'], "{}:{}"), p)
+        print '  %s @%s' % (fmtdur(pd['total']), p)
         for task, intvl in pd['tasks'].items():
-            print '    [%s] %s' % (fmtdur(intvl, '{}:{}'), wrapper.fill(task))
+            print '    [%s] %s' % (fmtdur(intvl), wrapper.fill(task))
 
 print '-'*18
-print 'Total {}'.format(grand_total)
+print 'Total {}'.format(fmtdur(grand_total))
 
