@@ -67,6 +67,9 @@ if __name__ == '__main__':
                       help='show color number used')
     options, args = parser.parse_args()
 
+    if len(args) < 1:
+        parser.error("You didn't provide a string of text to colorize")
+
     print(
         colorize(args[0], fg=options.fg, bg=options.bg, var=options.var,
                  bgalt=options.bgalt, debug=options.debug)
