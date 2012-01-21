@@ -102,7 +102,7 @@ dates.sort()
 grand_total = datetime.timedelta()
 
 for dt in dates:
-    wrapper = TextWrapper(width=65, subsequent_indent=" "*12)
+    wrapper = TextWrapper(width=65, subsequent_indent=" "*13)
     dtd = times[dt]
     grand_total += dtd['total']
     print '-'*18
