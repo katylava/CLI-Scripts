@@ -12,7 +12,10 @@ def get_words(level=1):
 
     for e in feed.entries:
         pq = PyQuery(e.description)
-        kor, pron, trans = pq.find('font')
+        try:
+            kor, pron, trans = pq.find('font')
+        except ValueError:
+            kor, pron, formality, trans = pq.find('font')
         link = pq.find('a')[0]
         out.append((
             PyQuery(kor).text(),
