@@ -40,7 +40,7 @@ def make_bg(file, size, resize_threshhold=3000):
     return im
 
 
-def choose_pix(directory, max_width, max_height):
+def choose_pix(directory, max_width, max_height, ratios=None):
     _pix = glob('{}/*.jpg'.format(directory))
     pix = _pix[:]
     for p in _pix:
@@ -51,50 +51,74 @@ def choose_pix(directory, max_width, max_height):
     if not pix:
         return
 
-    # we need at least 3 images, so dupe if need be
-    while len(pix) < 3:
+    if not ratios:
+       ratios = (('full',1,1),('tall',.5,1),('wide',1,.5))
+
+    # dupe if need be
+    while len(pix) < len(ratios):
         pix = pix + pix
 
     shuffle(pix)
 
-    return  {
-        'full': {
-            'size': (max_width, max_height),
-            'file': pix.pop(),
-        },
-        'tall': {
-            'size': (max_width/2, max_height),
-            'file': pix.pop(),
-        },
-        'wide': {
-            'size': (max_width, max_height/2),
-            'file': pix.pop(),
-        },
-    }
+    specs = {}
+    for key, w, h in ratios:
+        specs.update({
+            key: {
+                'size': (int(max_width*float(w)), int(max_height*float(h))),
+                'file': pix.pop(),
+            }
+        })
+    return specs
+
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
+    from optparse import OptionParser, OptionGroup
     usage = "Usage: %prog [options] picture_dir out_dir"
     parser = OptionParser(usage=usage)
     parser.add_option('-x', '--max-width', type='int', default=SCREEN_WIDTH)
     parser.add_option('-y', '--max-height', type='int', default=SCREEN_HEIGHT)
-    parser.add_option('-s', '--sizes', default='full,tall,wide')
+    parser.add_option('-s', '--sizes', help='Choose full, tall, and/or wide',
+                      default='full,tall,wide')
+    parser.add_option('-c', '--custom', action='store_true',
+                      help='Create a single size with ratios specified in'
+                           ' custom size options')
+    group = OptionGroup(parser, 'Custom size options')
+    group.add_option('--name', help='The out file name, no extension',
+                     default='custom')
+    group.add_option('--width', help='Float between 0 and 1, determines width'
+                                     ' of output image by multiplying by'
+                                     ' --max-width', type='float', default=1.0)
+    group.add_option('--height', help='Float between 0 and 1, determines height'
+                                     ' of output image by multiplying by'
+                                     ' --max-height', type='float', default=1.0)
+    parser.add_option_group(group)
     options, args = parser.parse_args()
 
     if not len(args) == 2:
         parser.error("%prog takes exactly 2 arguments")
 
     read_dir, out_dir = args
-    images = choose_pix(read_dir, options.max_width, options.max_height)
+
+    ratios = None
+    if options.custom:
+        ratios = ((options.name, options.width, options.height),)
+    images = choose_pix(read_dir, options.max_width, options.max_height, ratios)
 
     if not images:
         print 'No suitable images in {}'.format(read_dir)
         exit()
 
-    valid_sizes = images.keys()
-    _sizes = options.sizes.split(',')
-    sizes = [s.strip() for s in _sizes if s.strip() in valid_sizes] or valid_sizes
+    if not options.custom:
+        valid_sizes = images.keys()
+        _sizes = options.sizes.split(',')
+        sizes = [s.strip() for s in _sizes if s.strip() in valid_sizes] or valid_sizes
+    else:
+        if options.width < 0 or options.width > 1 \
+                or options.height < 0 or options.height > 1:
+            parser.error("width and height options must be between 0 and 1")
+        sizes = [options.name]
+
 
     for k in sizes:
         spec = images.get(k)
