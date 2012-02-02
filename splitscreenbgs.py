@@ -166,14 +166,28 @@ if __name__ == '__main__':
         exit()
 
     for k in sizes:
+        im = None # otherwise if error prev size is saved as current size
+
+        print("Generating {}.jpg".format(k))
+
         spec = images.get(k)
         new_file = '{}/{}.jpg'.format(out_dir,k)
+        now = datetime.now().strftime('%Y%m%d%H%I%S')
+        backup = '{}/{}.{}.jpg'.format(out_dir, k, now)
+
         try:
-            now = datetime.now().strftime('%Y%m%d%H%I%S')
-            move(new_file, '{}/{}.{}.jpg'.format(out_dir, k, now))
+            move(new_file, backup)
         except:
-            pass
-        im = make_bg(spec['file'], spec['size'])
-        im.save(new_file)
+            backup = None
+
+        try:
+            im = make_bg(spec['file'], spec['size'])
+        except GenerateImageError as e:
+            print("\tError generating image: {}".format(e.message))
+        else:
+            try:
+                im.save(new_file)
+            except Exception as e:
+                print("\tError saving image: {}".format(e.message))
 
 
