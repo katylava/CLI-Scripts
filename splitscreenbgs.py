@@ -94,6 +94,7 @@ def get_size_from_image(name, directory):
 
 
 if __name__ == '__main__':
+    from subprocess import Popen, PIPE
     from optparse import OptionParser, OptionGroup
     usage = "Usage: %prog [options] picture_dir out_dir"
     parser = OptionParser(usage=usage)
@@ -101,6 +102,8 @@ if __name__ == '__main__':
     parser.add_option('-y', '--max-height', type='int', default=SCREEN_HEIGHT)
     parser.add_option('-s', '--sizes', help='Choose full, tall, and/or wide',
                       default='full,tall,wide')
+    parser.add_option('-l', '--list', action='store_true',
+                      help='List current sizes in out_dir')
     parser.add_option('-c', '--custom', action='store_true',
                       help='Create a single size with ratios specified in'
                            ' custom size options')
@@ -120,6 +123,18 @@ if __name__ == '__main__':
         parser.error("%prog takes exactly 2 arguments")
 
     read_dir, out_dir = args
+
+    if options.list:
+        p = Popen("cd {} && ls *.jpg".format(out_dir),
+                  shell=True, stdin=PIPE, stdout=PIPE).communicate()
+        names = [pic.split('.')[0] for pic in p[0].split('\n')]
+        _sizes = sorted(set(names))
+        sizes = _sizes if _sizes[0] else _sizes[1:]
+        for s in sizes:
+            print(s)
+        print("\nGenerate new image for each size with option:\n"
+              "-s {}".format(','.join(sizes)))
+        exit()
 
     ratios = None
     if options.custom:
