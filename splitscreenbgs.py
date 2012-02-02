@@ -86,7 +86,8 @@ def get_size_from_image(name, directory):
     matches = glob('{}/{}*.jpg'.format(directory, name))
     if matches:
         sample = matches[0]
-        return Image.open(sample).size
+        size = Image.open(sample).size
+        return size if 0 not in size else None
     else:
         return None
 
@@ -140,6 +141,8 @@ if __name__ == '__main__':
                     float(size[0])/options.max_width,
                     float(size[1])/options.max_height,
                 ))
+            else:
+                print("Error: can't get size for {}".format(s))
 
     images = choose_pix(read_dir, options.max_width, options.max_height, ratios)
 
