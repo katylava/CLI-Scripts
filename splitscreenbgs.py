@@ -10,9 +10,15 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 800
 DEFAULT_RATIOS = (('full',1,1),('tall',.5,1),('wide',1,.5))
 
+class GenerateImageError(Exception):
+    pass
+
 def make_bg(file, size, resize_threshhold=3000):
     im = Image.open(file)
     orient = 'wide' if size[0] > size[1] else 'tall'
+
+    if 0 in im.size:
+        raise GenerateImageError("Can't read size of {}".format(file))
 
     # fit to width (or height if target is tall) before cropping
     if im.size[0] >= resize_threshhold or im.size[1] >= resize_threshhold:
@@ -22,21 +28,26 @@ def make_bg(file, size, resize_threshhold=3000):
         else:
             ratio = float(size[1])/im.size[1]
             new_size = (int(ratio*im.size[0]), size[1])
-        im = im.resize(new_size, Image.ANTIALIAS)
+        try:
+            im = im.resize(new_size, Image.ANTIALIAS)
+        except:
+            raise GenerateImageError("Failed resize: {}".format(file))
 
     #crop
     width_diff = im.size[0] - size[0]
     height_diff = im.size[1] - size[1]
     if width_diff or height_diff:
-        topleft = (0,0) if not width_diff else (
-            randrange(0, im.size[0] - size[0]),
-            randrange(0, im.size[1] - size[1]),
-        )
+        x_crop = 0 if not width_diff else randrange(0, width_diff)
+        y_crop = 0 if not height_diff else randrange(0, height_diff)
+        topleft = (x_crop, y_crop)
         bottomright = (
             topleft[0] + size[0],
             topleft[1] + size[1],
         )
-        im = im.crop(topleft + bottomright)
+        try:
+            im = im.crop(topleft + bottomright)
+        except:
+            raise GenerateImageError("Failed crop: {}".format(file))
 
     return im
 
