@@ -8,6 +8,7 @@ from PIL import Image
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 800
+DEFAULT_RATIOS = (('full',1,1),('tall',.5,1),('wide',1,.5))
 
 def make_bg(file, size, resize_threshhold=3000):
     im = Image.open(file)
@@ -52,7 +53,7 @@ def choose_pix(directory, max_width, max_height, ratios=None):
         return
 
     if not ratios:
-       ratios = (('full',1,1),('tall',.5,1),('wide',1,.5))
+       ratios = DEFAULT_RATIOS
 
     # dupe if need be
     while len(pix) < len(ratios):
@@ -69,6 +70,14 @@ def choose_pix(directory, max_width, max_height, ratios=None):
             }
         })
     return specs
+
+def get_size_from_image(name, directory):
+    matches = glob('{}/{}*.jpg'.format(directory, name))
+    if matches:
+        sample = matches[0]
+        return Image.open(sample).size
+    else:
+        return None
 
 
 
@@ -102,23 +111,30 @@ if __name__ == '__main__':
 
     ratios = None
     if options.custom:
+        if options.width < 0 or options.width > 1 \
+                or options.height < 0 or options.height > 1:
+            parser.error("width and height options must be between 0 and 1")
+        sizes = [options.name]
         ratios = ((options.name, options.width, options.height),)
+    else:
+        default_sizes = [t[0] for t in DEFAULT_RATIOS]
+        sizes = options.sizes.split(',')
+        extra_sizes = [s for s in sizes if s not in default_sizes]
+        ratios = [t for t in DEFAULT_RATIOS if t[0] in sizes]
+        for s in extra_sizes:
+            size = get_size_from_image(s, out_dir)
+            if size:
+                ratios.append((
+                    s,
+                    float(size[0])/options.max_width,
+                    float(size[1])/options.max_height,
+                ))
+
     images = choose_pix(read_dir, options.max_width, options.max_height, ratios)
 
     if not images:
         print 'No suitable images in {}'.format(read_dir)
         exit()
-
-    if not options.custom:
-        valid_sizes = images.keys()
-        _sizes = options.sizes.split(',')
-        sizes = [s.strip() for s in _sizes if s.strip() in valid_sizes] or valid_sizes
-    else:
-        if options.width < 0 or options.width > 1 \
-                or options.height < 0 or options.height > 1:
-            parser.error("width and height options must be between 0 and 1")
-        sizes = [options.name]
-
 
     for k in sizes:
         spec = images.get(k)
