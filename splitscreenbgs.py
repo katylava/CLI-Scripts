@@ -125,13 +125,20 @@ if __name__ == '__main__':
     read_dir, out_dir = args
 
     if options.list:
-        p = Popen("cd {} && ls *.jpg".format(out_dir),
-                  shell=True, stdin=PIPE, stdout=PIPE).communicate()
-        names = [pic.split('.')[0] for pic in p[0].split('\n')]
-        _sizes = sorted(set(names))
-        sizes = _sizes if _sizes[0] else _sizes[1:]
+        p = glob('{}/*.jpg'.format(out_dir))
+        get_basename = lambda x: x.split('/')[-1].split('.')[0]
+        names = [get_basename(pic) for pic in p]
+        sizes = sorted(set(names))
         for s in sizes:
-            print(s)
+            primary = '{}/{}.jpg'.format(out_dir, s)
+            if primary in p:
+                im  = Image.open(primary)
+                w, h = im.size
+                ratio = float(w)/float(h)
+            else:
+                w = h = ''
+                ratio = 0
+            print('{:>4}x{:<4} {:1.2f} {}'.format(w, h, ratio, s))
         print("\nGenerate new image for each size with option:\n"
               "-s {}".format(','.join(sizes)))
         exit()
