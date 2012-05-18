@@ -82,8 +82,8 @@ def choose_pix(directory, max_width, max_height, ratios=None):
         })
     return specs
 
-def get_size_from_image(name, directory):
-    matches = glob('{}/{}*.jpg'.format(directory, name))
+def get_size_from_image(name, directory, pattern='{}/{}.jpg'):
+    matches = glob(pattern.format(directory, name))
     if matches:
         sample = matches[0]
         size = Image.open(sample).size
@@ -100,6 +100,10 @@ if __name__ == '__main__':
     parser = OptionParser(usage=usage)
     parser.add_option('-x', '--max-width', type='int', default=SCREEN_WIDTH)
     parser.add_option('-y', '--max-height', type='int', default=SCREEN_HEIGHT)
+    parser.add_option('-f', '--file-name',
+                      help='Name for output file. Uses size if not given.')
+    parser.add_option('-b', '--backup', action='store_true',
+                      help='Create backup of existing file.')
     parser.add_option('-s', '--sizes', help='Choose full, tall, and/or wide',
                       default='full,tall,wide')
     parser.add_option('-l', '--list', action='store_true',
@@ -172,20 +176,27 @@ if __name__ == '__main__':
         print 'No suitable images in {}'.format(read_dir)
         exit()
 
+    num_images = len(sizes)
     for k in sizes:
         im = None # otherwise if error prev size is saved as current size
 
-        print("Generating {}.jpg".format(k))
+        if options.file_name and num_images > 1:
+            basename = '{}-{}'.format(k, options.file_name)
+        else:
+            basename = options.file_name or '{}.jpg'.format(k)
+        print("Generating {}".format(basename))
 
         spec = images.get(k)
-        new_file = '{}/{}.jpg'.format(out_dir,k)
+        new_file = '{}/{}'.format(out_dir,basename)
         now = datetime.now().strftime('%Y%m%d%H%I%S')
-        backup = '{}/{}.{}.jpg'.format(out_dir, k, now)
 
-        try:
-            move(new_file, backup)
-        except:
-            backup = None
+        if options.backup:
+            backup = '{}/{}.{}.{}'.format(out_dir, k, now, basename)
+            try:
+                move(new_file, backup)
+            except:
+                print("\tError creating backup file {}".format(backup))
+                backup = None
 
         try:
             im = make_bg(spec['file'], spec['size'])
@@ -195,6 +206,8 @@ if __name__ == '__main__':
             try:
                 im.save(new_file)
             except Exception as e:
-                print("\tError saving image: {}".format(e.message))
+                print("\tError saving image to {}: {}".format(new_file, e.message))
+                if backup:
+                    move(backup, new_file)
 
 
