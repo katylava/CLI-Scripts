@@ -58,9 +58,11 @@ class ItermSessionBG:
             float(size[1])/SCREEN_HEIGHT,
         )]
 
-    def change_session_bg(self):
+    def change_session_bg(self, filename=None):
         ratio = self.get_ratio()
-        images = ss.choose_pix(INPUT_DIR, SCREEN_WIDTH, SCREEN_HEIGHT, ratio)
+        images = ss.choose_pix(INPUT_DIR, SCREEN_WIDTH, SCREEN_HEIGHT,
+                               ratios=ratio,
+                               pattern=filename)
         spec = images[self.prefix]
 
         try:
@@ -84,6 +86,7 @@ if __name__ == '__main__':
     usage = "Usage: %prog [options]"
     parser = OptionParser(usage=usage)
     parser.add_option('-p', '--prefix')
+    parser.add_option('-f', '--filename')
     parser.add_option('-u', '--unset', action='store_true')
     parser.add_option('-l', '--list', action='store_true',
                       help='List current prefixes in out_dir')
@@ -103,7 +106,7 @@ if __name__ == '__main__':
     if options.unset:
         bg.unset_bg()
     else:
-        print bg.change_session_bg()
+        print bg.change_session_bg(filename=options.filename)
 
     # refresh screen by resizing text
     iterm = app('System Events').processes['iTerm']

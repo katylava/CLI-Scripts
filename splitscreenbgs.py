@@ -51,9 +51,9 @@ def make_bg(file, size, resize_threshhold=3000):
 
     return im
 
-
-def choose_pix(directory, max_width, max_height, ratios=None):
-    _pix = glob('{}/*.jpg'.format(directory))
+def choose_pix(directory, max_width, max_height, ratios=None, pattern=None):
+    search = pattern or '{}/*.jpg'
+    _pix = glob(search.format(directory))
     pix = _pix[:]
     for p in _pix:
         size = Image.open(p).size
