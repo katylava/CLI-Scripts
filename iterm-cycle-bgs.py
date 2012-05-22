@@ -63,6 +63,9 @@ class ItermSessionBG:
         images = ss.choose_pix(INPUT_DIR, SCREEN_WIDTH, SCREEN_HEIGHT,
                                ratios=ratio,
                                pattern=filename)
+        if not images:
+            raise Exception("\tNo images in {} match parameters".format(INPUT_DIR))
+
         spec = images[self.prefix]
 
         try:
@@ -106,10 +109,13 @@ if __name__ == '__main__':
     if options.unset:
         bg.unset_bg()
     else:
-        print bg.change_session_bg(filename=options.filename)
-
-    # refresh screen by resizing text
-    iterm = app('System Events').processes['iTerm']
-    menu = iterm.menu_bars[0].menus['View'].menu_items
-    menu['Make Text Smaller'].click()
-    menu['Make Text Bigger'].click()
+        try:
+            print bg.change_session_bg(filename=options.filename)
+        except Exception as e:
+            print e.message
+        else:
+            # refresh screen by resizing text
+            iterm = app('System Events').processes['iTerm']
+            menu = iterm.menu_bars[0].menus['View'].menu_items
+            menu['Make Text Smaller'].click()
+            menu['Make Text Bigger'].click()
