@@ -50,26 +50,15 @@ class ItermSessionBG:
     def unset_bg(self):
         self.session.background_image_path.set(u'')
 
-    def get_ratio(self):
-        size = ss.get_size_from_image(self.prefix, OUTPUT_DIR)
-        return [(
-            self.prefix,
-            float(size[0])/SCREEN_WIDTH,
-            float(size[1])/SCREEN_HEIGHT,
-        )]
-
     def change_session_bg(self, filename=None):
-        ratio = self.get_ratio()
-        images = ss.choose_pix(INPUT_DIR, SCREEN_WIDTH, SCREEN_HEIGHT,
-                               ratios=ratio,
-                               pattern=filename)
-        if not images:
+        size = ss.get_size_from_image(self.prefix, OUTPUT_DIR)
+        pattern = '{{}}/{}'.format(filename)
+        path = ss.choose_pic(INPUT_DIR, size[0], size[1], pattern=pattern)
+        if not path:
             raise Exception("\tNo images in {} match parameters".format(INPUT_DIR))
 
-        spec = images[self.prefix]
-
         try:
-            im = ss.make_bg(spec['file'], spec['size'])
+            im = ss.make_bg(path, size)
         except ss.GenerateImageError as e:
             print("\tError generating image: {}".format(e.message))
         else:
@@ -79,7 +68,7 @@ class ItermSessionBG:
                 print("\tError saving image to {}: {}".format(self.filepath(),
                                                               e.message))
             else:
-                return self.set_session_bg(self.filepath())
+                return (self.set_session_bg(self.filepath()), path)
 
 
 
@@ -110,7 +99,8 @@ if __name__ == '__main__':
         bg.unset_bg()
     else:
         try:
-            print bg.change_session_bg(filename=options.filename)
+            paths = bg.change_session_bg(filename=options.filename)
+            print("Changed {}\nto {}".format(*paths))
         except Exception as e:
             print e.message
         else:
