@@ -52,7 +52,7 @@ class ItermSessionBG:
 
     def change_session_bg(self, filename=None):
         size = ss.get_size_from_image(self.prefix, OUTPUT_DIR)
-        pattern = '{{}}/{}'.format(filename)
+        pattern = filename and '{{}}/{}'.format(filename) or None
         path = ss.choose_pic(INPUT_DIR, size[0], size[1], pattern=pattern)
         if not path:
             raise Exception("\tNo images in {} match parameters".format(INPUT_DIR))
