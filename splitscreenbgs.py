@@ -31,8 +31,9 @@ def make_bg(file, size, resize_threshhold=3000):
             new_size = (int(ratio*im.size[0]), size[1])
         try:
             im = im.resize(new_size, Image.ANTIALIAS)
-        except:
-            raise GenerateImageError("Failed resize: {}".format(file))
+        except Exception as e:
+            raise GenerateImageError(
+                    "Failed resize: {}\nError: {}".format(file, e.message))
 
     #crop
     width_diff = im.size[0] - size[0]
@@ -47,8 +48,9 @@ def make_bg(file, size, resize_threshhold=3000):
         )
         try:
             im = im.crop(topleft + bottomright)
-        except:
-            raise GenerateImageError("Failed crop: {}".format(file))
+        except Exception as e:
+            raise GenerateImageError(
+                    "Failed crop: {}\nError: {}".format(file, e.message))
 
     return im
 
@@ -64,7 +66,7 @@ def choose_pic(directory, min_width, min_height, pattern=None):
 
     for p in pix:
         size = Image.open(p).size
-        if size[0] > min_width and size[1] > min_height:
+        if size[0] >= min_width and size[1] >= min_height:
             return p
 
 def get_specs(directory, tot_width, tot_height, ratios=None, pattern=None):
