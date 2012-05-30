@@ -35,8 +35,8 @@ def make_bg(file, size, resize_threshhold=3000):
                     "Failed resize: {}\nError: {}".format(file, e.message))
 
     #crop
-    width_diff = im.size[0] - size[0]
-    height_diff = im.size[1] - size[1]
+    width_diff = abs(im.size[0] - size[0])
+    height_diff = abs(im.size[1] - size[1])
     if width_diff or height_diff:
         x_crop = 0 if not width_diff else randrange(0, width_diff)
         y_crop = 0 if not height_diff else randrange(0, height_diff)
