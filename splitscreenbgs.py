@@ -124,6 +124,9 @@ if __name__ == '__main__':
     parser.add_option('-y', '--tot-height', type='int', default=SCREEN_HEIGHT)
     parser.add_option('-f', '--file-name',
                       help='Name for output file. Uses prefix if not given.')
+    parser.add_option('-t', '--threshhold', type='int',
+                      help="Width or height beyond which image should be resized"
+                           " instead of cropped")
     parser.add_option('-b', '--backup', action='store_true',
                       help='Create backup of existing file.')
     parser.add_option('-p', '--prefixes', help='Choose full, tall, and/or wide',
@@ -206,7 +209,8 @@ if __name__ == '__main__':
                 backup = None
 
         try:
-            im = make_bg(spec['file'], spec['size'])
+            im = make_bg(spec['file'], spec['size'],
+                         resize_threshhold=options.threshhold)
         except GenerateImageError as e:
             print("\tError generating image: {}".format(e.message))
         else:

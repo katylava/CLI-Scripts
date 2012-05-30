@@ -15,6 +15,7 @@ class ItermSessionBG:
     prefix = None
     session = None
     current = None
+    threshhold = None
 
     def __init__(self, tty, prefix=None):
         self.tty = tty
@@ -58,7 +59,7 @@ class ItermSessionBG:
             raise Exception("\tNo images in {} match parameters".format(INPUT_DIR))
 
         try:
-            im = ss.make_bg(path, size)
+            im = ss.make_bg(path, size, self.threshhold)
         except ss.GenerateImageError as e:
             print("\tError generating image: {}".format(e.message))
         else:
@@ -79,6 +80,9 @@ if __name__ == '__main__':
     parser = OptionParser(usage=usage)
     parser.add_option('-p', '--prefix')
     parser.add_option('-f', '--filename')
+    parser.add_option('-t', '--threshhold', type='int',
+                      help="Width or height beyond which image should be resized"
+                           " instead of cropped")
     parser.add_option('-u', '--unset', action='store_true')
     parser.add_option('-l', '--list', action='store_true',
                       help='List current prefixes in out_dir')
@@ -95,6 +99,7 @@ if __name__ == '__main__':
         exit()
 
     bg = ItermSessionBG(tty, options.prefix)
+    bg.threshhold = options.threshhold
     if options.unset:
         bg.unset_bg()
     else:
