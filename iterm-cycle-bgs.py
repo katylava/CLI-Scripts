@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser = OptionParser(usage=usage)
     parser.add_option('-p', '--prefix')
     parser.add_option('-f', '--filename')
-    parser.add_option('-t', '--threshhold', type='int',
+    parser.add_option('-t', '--threshhold', type='int', default=3000,
                       help="Width or height beyond which image should be resized"
                            " instead of cropped")
     parser.add_option('-u', '--unset', action='store_true')
