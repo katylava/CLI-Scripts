@@ -24,11 +24,10 @@ def make_bg(file, size, resize_threshhold=3000):
     # fit to width (or height if target is tall) before cropping
     if im.size[0] >= resize_threshhold or im.size[1] >= resize_threshhold:
         if orient == 'wide':
-            ratio = float(size[0])/im.size[0]
-            new_size = (size[0], int(ratio*im.size[1]))
-        else:
             ratio = float(size[1])/im.size[1]
-            new_size = (int(ratio*im.size[0]), size[1])
+        else:
+            ratio = float(size[0])/im.size[0]
+        new_size = (int(ratio*im.size[0]), int(ratio*im.size[1]))
         try:
             im = im.resize(new_size, Image.ANTIALIAS)
         except Exception as e:
