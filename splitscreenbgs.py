@@ -19,17 +19,12 @@ def make_bg(file, size, resize_threshhold=3000):
     if 0 in im.size:
         raise GenerateImageError("Can't read size of {}".format(file))
 
-    fit_orient = 'wide' if size[0] > size[1] else 'tall'
-    im_orient = 'wide' if im.size[0] > im.size[1] else 'tall'
-
     # fit to width (or height if target is tall) before cropping
     if im.size[0] >= resize_threshhold or im.size[1] >= resize_threshhold:
+        im_orient = 'wide' if im.size[0] > im.size[1] else 'tall'
         w_ratio = float(size[0])/float(im.size[0])
         h_ratio = float(size[1])/float(im.size[1])
-        if fit_orient == 'wide':
-            ratio = h_ratio if im_orient == 'wide' else w_ratio
-        else:
-            ratio = h_ratio if im_orient == 'tall' else w_ratio
+        ratio = h_ratio if im_orient == 'wide' else w_ratio
         new_size = (int(ratio*im.size[0]), int(ratio*im.size[1]))
         try:
             im = im.resize(new_size, Image.ANTIALIAS)
