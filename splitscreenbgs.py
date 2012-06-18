@@ -55,7 +55,7 @@ def make_bg(file, size, resize_threshhold=3000):
 def choose_pic(directory, min_width, min_height, pattern=None):
     search = pattern or '{}/*.jpg'
     if hasattr(directory, '__iter__'):
-        _pix = fnmatch.filter(directory, search)
+        _pix = fnmatch.filter(directory, search.format('*'))
     else:
         _pix = glob(search.format(directory))
 
