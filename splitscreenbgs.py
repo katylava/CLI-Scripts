@@ -122,28 +122,29 @@ if __name__ == '__main__':
     parser.add_option('-x', '--tot-width', type='int', default=SCREEN_WIDTH)
     parser.add_option('-y', '--tot-height', type='int', default=SCREEN_HEIGHT)
     parser.add_option('-f', '--file-name',
-                      help='Name for output file. Uses prefix if not given.')
+                      help="Name for output file. Uses prefix if not given.")
     parser.add_option('-t', '--threshhold', type='int',
                       help="Width or height beyond which image should be resized"
                            " instead of cropped")
     parser.add_option('-b', '--backup', action='store_true',
-                      help='Create backup of existing file.')
-    parser.add_option('-p', '--prefixes', help='Choose full, tall, and/or wide',
-                      default='full,tall,wide')
+                      help="Create backup of existing file.")
+    parser.add_option('-p', '--prefixes',
+                      help="Use --list option to see existing prefixes",
+                      default='full')
     parser.add_option('-l', '--list', action='store_true',
-                      help='List current sizes in out_dir')
+                      help="List current sizes in out_dir")
     parser.add_option('-c', '--custom', action='store_true',
-                      help='Create a single size with ratios specified in'
-                           ' custom size options')
+                      help="Create a single size with ratios specified in"
+                           " custom size options")
     group = OptionGroup(parser, 'Custom size options')
-    group.add_option('--prefix', help='The out file name, no extension',
+    group.add_option('--prefix', help="The out file name, no extension",
                      default='custom')
-    group.add_option('--width', help='Float between 0 and 1, determines width'
-                                     ' of output image by multiplying by'
-                                     ' --tot-width', type='float', default=1.0)
-    group.add_option('--height', help='Float between 0 and 1, determines height'
-                                     ' of output image by multiplying by'
-                                     ' --tot-height', type='float', default=1.0)
+    group.add_option('--width', type='float', default=1.0, 
+                     help="Float between 0 and 1, determines width"
+                          " of output image by multiplying by --tot-width")
+    group.add_option('--height', type='float', default=1.0, 
+                     help="Float between 0 and 1, determines height"
+                          " of output image by multiplying by --tot-height")
     parser.add_option_group(group)
     options, args = parser.parse_args()
 
