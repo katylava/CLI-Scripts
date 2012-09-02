@@ -27,7 +27,7 @@ class ItermSessionBG:
         self.session = term.sessions[its.id==tty]
         self.current = self.session.background_image_path()[0]
 
-        if not self.current:
+        if not self.current or self.current.__repr__() == 'k.missingvalue':
             if not self.prefix:
                 raise NotImplementedError('Please provide a prefix')
             else:
@@ -79,6 +79,8 @@ if __name__ == '__main__':
     usage = "Usage: %prog [options]"
     parser = OptionParser(usage=usage)
     parser.add_option('-p', '--prefix')
+    parser.add_option('-r', '--reload', action='store_true',
+                      help="Set to the last bg for this prefix and this tty")
     parser.add_option('-f', '--filename')
     parser.add_option('-t', '--threshhold', type='int', default=3000,
                       help="Width or height beyond which image should be resized"
@@ -99,6 +101,9 @@ if __name__ == '__main__':
         exit()
 
     bg = ItermSessionBG(tty, options.prefix)
+    if options.reload:
+        exit() # initialization sets to last bg for prefix
+
     bg.threshhold = options.threshhold
     if options.unset:
         bg.unset_bg()
