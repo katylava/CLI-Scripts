@@ -21,11 +21,17 @@ def make_bg(file, size, resize_threshhold=3000):
 
     # fit to width (or height if target is tall) before cropping
     if im.size[0] >= resize_threshhold or im.size[1] >= resize_threshhold:
-        im_orient = 'wide' if im.size[0] > im.size[1] else 'tall'
         w_ratio = float(size[0])/float(im.size[0])
-        h_ratio = float(size[1])/float(im.size[1])
-        ratio = h_ratio if im_orient == 'wide' else w_ratio
-        new_size = (int(ratio*im.size[0]), int(ratio*im.size[1]))
+        new_height = im.size[1] * w_ratio
+        if new_height >= size[1]:
+            new_size = (size[0], new_height)
+        else:
+            h_ratio = float(size[1])/float(im.size[1])
+            new_width = im.size[0] * h_ratio
+            if new_width >= size[0]:
+                new_size = (new_width, size[1])
+            else:
+                new_size = im.size
         try:
             im = im.resize(new_size, Image.ANTIALIAS)
         except Exception as e:
@@ -139,10 +145,10 @@ if __name__ == '__main__':
     group = OptionGroup(parser, 'Custom size options')
     group.add_option('--prefix', help="The out file name, no extension",
                      default='custom')
-    group.add_option('--width', type='float', default=1.0, 
+    group.add_option('--width', type='float', default=1.0,
                      help="Float between 0 and 1, determines width"
                           " of output image by multiplying by --tot-width")
-    group.add_option('--height', type='float', default=1.0, 
+    group.add_option('--height', type='float', default=1.0,
                      help="Float between 0 and 1, determines height"
                           " of output image by multiplying by --tot-height")
     parser.add_option_group(group)
