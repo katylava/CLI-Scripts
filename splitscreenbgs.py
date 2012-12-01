@@ -206,13 +206,13 @@ if __name__ == '__main__':
         new_file = '{}/{}'.format(out_dir,basename)
         now = datetime.now().strftime('%Y%m%d%H%I%S')
 
+        backup = None
         if options.backup:
             backup = '{}/{}.{}.{}'.format(out_dir, k, now, basename)
             try:
                 move(new_file, backup)
             except:
                 print("\tError creating backup file {}".format(backup))
-                backup = None
 
         try:
             im = make_bg(spec['file'], spec['size'],
