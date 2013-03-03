@@ -82,7 +82,7 @@ if __name__ == '__main__':
     parser.add_option('-r', '--reload', action='store_true',
                       help="Set to the last bg for this prefix and this tty")
     parser.add_option('-f', '--filename')
-    parser.add_option('-t', '--threshhold', type='int', default=3000,
+    parser.add_option('-t', '--threshhold', type='int', default=2000,
                       help="Width or height beyond which image should be resized"
                            " instead of cropped")
     parser.add_option('-u', '--unset', action='store_true')
