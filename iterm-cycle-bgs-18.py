@@ -3,8 +3,8 @@
 from appscript import app, its
 import splitscreenbgs as ss
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 696 # 720 - tab height
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 876 # 900 - tab height
 INPUT_DIR = "/Users/kyl/Pictures/Wallpapers/InRotation"
 OUTPUT_DIR = "/Users/kyl/Pictures/SplitScreenBGs/Ratio1.8"
 
