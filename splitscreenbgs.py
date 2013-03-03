@@ -22,12 +22,12 @@ def make_bg(file, size, resize_threshhold=3000):
     # fit to width (or height if target is tall) before cropping
     if im.size[0] >= resize_threshhold or im.size[1] >= resize_threshhold:
         w_ratio = float(size[0])/float(im.size[0])
-        new_height = im.size[1] * w_ratio
+        new_height = int(im.size[1] * w_ratio)
         if new_height >= size[1]:
             new_size = (size[0], new_height)
         else:
             h_ratio = float(size[1])/float(im.size[1])
-            new_width = im.size[0] * h_ratio
+            new_width = int(im.size[0] * h_ratio)
             if new_width >= size[0]:
                 new_size = (new_width, size[1])
             else:
@@ -36,6 +36,7 @@ def make_bg(file, size, resize_threshhold=3000):
             im = im.resize(new_size, Image.ANTIALIAS)
         except Exception as e:
             print "Resize failed. Skipping ahead to crop."
+            print e.message
             #raise GenerateImageError(
                     #"Failed resize: {}\nError: {}".format(file, e.message))
 
