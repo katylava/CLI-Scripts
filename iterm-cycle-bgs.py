@@ -5,8 +5,8 @@ import splitscreenbgs as ss
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 778 # 800 - tab height
-INPUT_DIR = "/Users/kyl/Pictures/Wallpapers/InRotation"
-OUTPUT_DIR = "/Users/kyl/Pictures/SplitScreenBGs"
+INPUT_DIR = "/Users/kyl/Copy/Wallpapers/InRotation"
+OUTPUT_DIR = "/Users/kyl/Copy/Wallpapers/SplitScreenBGs"
 
 
 class ItermSessionBG:
